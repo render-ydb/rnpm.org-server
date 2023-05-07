@@ -10,8 +10,9 @@ export class APIController {
   @Inject()
   userService: UserService;
 
-  @Get('/get_user')
-  async getUser(@Query('uid') uid) {
+  @Get('/get_user',{ summary: 'test',description:"获取接口"})
+  async getUser(@Query('uid') uid:number) {
+    // @Query('uid') uid: number,
     const user = await this.userService.getUser({ uid });
     
     return { success: true, message: 'OK', data: user };
