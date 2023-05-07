@@ -1,6 +1,8 @@
 import { Controller, Get, Put,Inject, Param, Body } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
+import { ApiTags } from '@midwayjs/swagger';
 
+@ApiTags(['web'])
 @Controller('/')
 export class HomeController {
 
