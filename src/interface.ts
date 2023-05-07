@@ -1,3 +1,13 @@
+import { MidwayConfig } from '@midwayjs/core';
+import { SwaggerOptions } from "@midwayjs/swagger";
+/**
+ * @description configuration file types
+*/
+export interface IProjectConfig extends MidwayConfig {
+  swagger: SwaggerOptions;
+}
+
+
 /**
  * @description User-Service parameters
  */

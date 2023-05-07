@@ -7,11 +7,13 @@ import { join } from 'path';
 import { DefaultErrorFilter } from './filter/default.filter';
 import { NotFoundFilter } from './filter/notfound.filter';
 import { ReportMiddleware } from './middleware/report.middleware';
+import * as sequelize from '@midwayjs/sequelize';
 
 @Configuration({
   imports: [
     koa,
     validate,
+    sequelize,
     swagger,
     {
       component: info,

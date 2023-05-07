@@ -1,7 +1,7 @@
-import { MidwayConfig } from '@midwayjs/core';
+import { IProjectConfig } from "../interface";
 
 export default {
   koa: {
     port: null,
   },
-} as MidwayConfig;
+} as IProjectConfig;
