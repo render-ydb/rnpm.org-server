@@ -21,3 +21,17 @@ export interface IUserOptions {
 export interface IUserOptions {
   uid: number;
 }
+
+/**
+ * @description 需要创建用户的用户信息
+ */
+export interface IUserBaseInfo {
+  _id: string;
+  name:string;
+  password:string;
+  email:string;
+  type:string;
+  roles:Array<string>;
+  date:string
+}
+

@@ -41,7 +41,7 @@ export default {
           charset: 'utf8',
           collate: 'utf8_general_ci',
         },
-        sync: true,
+        sync: false,
       }
     }
   }
