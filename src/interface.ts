@@ -1,37 +1,35 @@
-import { MidwayConfig } from '@midwayjs/core';
 import { SwaggerOptions } from "@midwayjs/swagger";
 /**
  * @description configuration file types
 */
-export interface IProjectConfig extends MidwayConfig {
+
+interface IAdmins {
+  fengmk2: string;
+  admin: string;
+  dead_horse: string
+}
+
+export interface AppConfig {
   swagger: SwaggerOptions;
+  uploadDir: string
+  registryHost: string,
+  protocol: string,
+  admins: IAdmins,
+  privatePackages: Array<string>,
+  scopes: Array<string>,
 }
 
-
-/**
- * @description User-Service parameters
- */
-export interface IUserOptions {
-  uid: number;
-}
-
-/**
- * @description npm i/npm publish通过put请求上传包时候的body类型定义
- */
-export interface IUserOptions {
-  uid: number;
-}
 
 /**
  * @description 需要创建用户的用户信息
  */
-export interface IUserBaseInfo {
+export interface UserBaseInfo {
   _id: string;
-  name:string;
-  password:string;
-  email:string;
-  type:string;
-  roles:Array<string>;
-  date:string
+  name: string;
+  password: string;
+  email: string;
+  type: string;
+  roles: Array<string>;
+  date: string
 }
 

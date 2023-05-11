@@ -1,8 +1,13 @@
 import { Provide } from '@midwayjs/core';
-// import { IUserOptions } from '../interface';
+import { Config, ALL } from '@midwayjs/core';
+
 
 @Provide()
 export class UserService {
+
+  @Config(ALL)
+  appConifg;
+
 
   async auth(userName: string, password: string) {
     // TODO
@@ -23,7 +28,18 @@ export class UserService {
   }
 
   async authAndSave(userName: string, password: string) {
-    // TODO
+    // const user = await this.auth(userName, password);
+    // if (user) {
+    //   if (this.appConfig.customUserService) {
+    //     // make sure sync user meta to cnpm database
+    //     var data = {
+    //       rev: Date.now() + '-' + user.login,
+    //       user: user
+    //     };
+    //     yield User.saveCustomUser(data);
+    //   }
+    // }
+    // return user;
   }
 
   async add(user: Record<string, any>) {

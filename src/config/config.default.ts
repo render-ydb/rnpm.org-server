@@ -1,5 +1,4 @@
-import { IProjectConfig } from "../interface";
-
+import { MidwayConfig } from "@midwayjs/core";
 
 export default {
   // use for cookie sign key, should change to your own and keep security
@@ -31,7 +30,7 @@ export default {
         password: "123456",
         port: '3306',
         dialect: 'mysql',
-        entities:[
+        entities: [
           "entity"
         ],
         define: {
@@ -46,5 +45,4 @@ export default {
     }
   }
 
-
-} as IProjectConfig;
+} as MidwayConfig;

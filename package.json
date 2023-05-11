@@ -16,7 +16,8 @@
     "mysql2": "^3.3.0",
     "sequelize": "^6.31.1",
     "sequelize-auto-midway": "^0.0.10",
-    "sequelize-typescript": "^2.1.5"
+    "sequelize-typescript": "^2.1.5",
+    "utility": "^1.18.0"
   },
   "devDependencies": {
     "@midwayjs/cli": "^2.0.0",
