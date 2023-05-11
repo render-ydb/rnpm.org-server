@@ -1,3 +1,7 @@
+import gravatar = require('gravatar');
+import { isAdmin } from '../lib';
+
+
 
 // const  convertToUser = (row)=> {
 //     const user = {

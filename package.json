@@ -13,6 +13,7 @@
     "@midwayjs/sequelize": "^3.11.6",
     "@midwayjs/swagger": "3",
     "@midwayjs/validate": "^3.0.0",
+    "gravatar": "^1.8.2",
     "mysql2": "^3.3.0",
     "sequelize": "^6.31.1",
     "sequelize-auto-midway": "^0.0.10",
