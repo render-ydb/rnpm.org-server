@@ -1,4 +1,5 @@
 import { SwaggerOptions } from "@midwayjs/swagger";
+
 /**
  * @description configuration file types
 */
@@ -17,8 +18,6 @@ export interface AppConfig {
   admins: IAdmins,
   privatePackages: Array<string>,
   scopes: Array<string>,
-  userService:any,
-  customUserService:boolean
 }
 
 
