@@ -5,6 +5,7 @@ import { Context } from '@midwayjs/koa';
 @Catch()
 export class DefaultErrorFilter {
   async catch(err: Error, ctx: Context) {
+    console.error(err);
     return {
       success: false,
       message: err.message,

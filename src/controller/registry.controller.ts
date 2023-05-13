@@ -2,7 +2,7 @@ import { Inject, Controller, Put, Body} from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
 import { ApiTags } from '@midwayjs/swagger';
 import {AddUserService} from '../registry/user/add.service'
-import { UserBaseInfo } from '../interface';
+import { UserDTO } from '../dto/user.dto';
 
 
 @ApiTags(['registry'])
@@ -16,7 +16,7 @@ export class RegistryController {
 
  
   @Put('/-/user/org.couchdb.user:name')
-  async createUser(@Body() body:UserBaseInfo) {
+  async createUser(@Body() body:UserDTO) {
     return await this.addUser.index(body)
   }
 }

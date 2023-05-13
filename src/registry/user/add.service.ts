@@ -1,9 +1,10 @@
 import { Provide, Inject } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
-import { UserBaseInfo } from '../../interface';
+// import { UserBaseInfo } from '../../interface';
 import { UserService } from '../../service/user.service';
 import { TokenService } from '../../service/token.service';
 import ensurePasswordSalt = require('../../utils/ensurePasswordSalt');
+import { UserDTO } from '../../dto/user.dto';
 
 
 @Provide()
@@ -21,19 +22,14 @@ export class AddUserService {
     * @description create a new user
     * https://registry.npmjs.org/-/user/org.couchdb.user:render
    */
-  async index(body: UserBaseInfo) {
-    console.log("body", body)
-    body = body || {} as UserBaseInfo;
-    // console.log(useConfig());
+  // _id: 'org.couchdb.user:cubber',
+  // name: 'your_name',
+  // password: 'your_password',
+  // type: 'user',
+  // roles: [],
+  // date: '2023-05-13T11:53:02.223Z'
+  async index(body: UserDTO = {} as UserDTO) {
     const { name, password } = body;
-    if (!password || !name) {
-      this.ctx.status = 422;
-      const error = '[param_error] params missing, name, email or password missing';
-      return {
-        error,
-        reason: error,
-      }
-    }
     let loginedUser;
     try {
       loginedUser = await this.userService.authAndSave(name, password);
@@ -48,8 +44,8 @@ export class AddUserService {
 
     if (loginedUser) {
       const token = await this.tokenService.createToken(body.name, {
-        readonly: !!body.readonly,
-        cidrWhitelist: body.cidr_whitelist || [],
+        readonly: false,
+        cidrWhitelist: [],
       });
       this.ctx.status = 201;
       return {
@@ -62,8 +58,9 @@ export class AddUserService {
 
     const user = {
       name: body.name,
-      salt: body.salt,
-      password_sha: body.password_sha,
+      salt: '',
+      password_sha: '',
+      // @ts-ignore
       email: body.email,
       ip: this.ctx.ip || '0.0.0.0',
       roles: body.roles || [],
@@ -94,8 +91,8 @@ export class AddUserService {
     this.ctx.set('etag', '"' + result.rev + '"');
 
     const token = await this.tokenService.createToken(body.name, {
-      readonly: !!body.readonly,
-      cidrWhitelist: body.cidr_whitelist || [],
+      readonly: false,
+      cidrWhitelist: [],
     });
     this.ctx.status = 200;
     console.log("jieguo", {

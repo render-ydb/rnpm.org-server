@@ -6,6 +6,7 @@ import * as info from '@midwayjs/info';
 import { join } from 'path';
 import { DefaultErrorFilter } from './filter/default.filter';
 import { NotFoundFilter } from './filter/notfound.filter';
+import { ValidateErrorFilter } from './filter/validate.filter';
 import { ReportMiddleware } from './middleware/report.middleware';
 import * as sequelize from '@midwayjs/sequelize';
 
@@ -30,6 +31,6 @@ export class ContainerLifeCycle {
     // add middleware
     this.app.useMiddleware([ReportMiddleware]);
     // add filter
-    this.app.useFilter([NotFoundFilter, DefaultErrorFilter]);
+    this.app.useFilter([NotFoundFilter, DefaultErrorFilter,ValidateErrorFilter]);
   }
 }
