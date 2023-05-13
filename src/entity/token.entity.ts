@@ -92,7 +92,22 @@ export class TokenEntity extends Model {
     type: DataType.STRING(500),
     allowNull: false,
     comment: "ip list, [\"127.0.0.1\"]",
-    field: 'cidr_whitelist'
+    field: 'cidr_whitelist',
+    get: function(){
+      try {
+        return JSON.parse(this.getDataValue('cidrWhitelist'));
+      } catch  {
+        return [];
+      }
+    },
+    set: function (val) {
+      try {
+        const stringifyVal = JSON.stringify(val);
+        this.setDataValue('cidrWhitelist', stringifyVal);
+      } catch  {
+        // ...
+      }
+    }
   })
   cidrWhitelist: string;
 }

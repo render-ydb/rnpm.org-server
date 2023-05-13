@@ -1,4 +1,5 @@
 import { Column, DataType, Table, Model } from 'sequelize-typescript';
+import jsonParser = require('../utils/jsonParser');
 
 @Table({
   tableName: 'user',
@@ -111,7 +112,9 @@ export class UserEntity extends Model {
   @Column({
     type: DataType.TEXT,
     allowNull: true,
-    comment: "json details"
+    comment: "json details",
+    get: jsonParser.JSONGetter('json'),
+    set: jsonParser.JSONSetter('json'),
   })
   json: string;
 

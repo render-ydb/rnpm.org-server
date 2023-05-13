@@ -31,7 +31,11 @@ export interface UserBaseInfo {
   email: string;
   type: string;
   roles: Array<string>;
-  date: string
+  date: string,
+  salt: string,
+  password_sha:string,
+  readonly:any
+  cidr_whitelist:Array<string>
 }
 
 
