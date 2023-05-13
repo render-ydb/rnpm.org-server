@@ -35,12 +35,12 @@ export default {
         ],
         define: {
           timestamps: true,
-          createdAt: 'gmt_create',
-          updatedAt: 'gmt_modified',
+          createdAt: 'gmtCreate',
+          updatedAt: 'gmtModified',
           charset: 'utf8',
           collate: 'utf8_general_ci',
         },
-        sync: false,
+        sync: true,
       }
     }
   }
