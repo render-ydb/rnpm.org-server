@@ -17,6 +17,8 @@ export interface AppConfig {
   admins: IAdmins,
   privatePackages: Array<string>,
   scopes: Array<string>,
+  userService:any,
+  customUserService:boolean
 }
 
 
@@ -33,3 +35,5 @@ export interface UserBaseInfo {
   date: string
 }
 
+
+export type Json = Record<string,any>

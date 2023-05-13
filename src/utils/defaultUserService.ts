@@ -47,6 +47,9 @@ const convertToUser = (row: UserEntity) => {
   return user;
 }
 
+type UserInfo = ReturnType<typeof convertToUser>;
+
+
 export default class DefaultUserService {
   /**
    * Auth user with login name and password
@@ -64,14 +67,50 @@ export default class DefaultUserService {
 
   /**
    * Get user by login name
-   * @param  {String} login  login name
+   * @param  {String} userName  user name
    * @return {User}
   */
-  async get(userName:string) {
+  async get(userName: string) {
     const user = await User.findByName(userName);
     if (!user) {
       return null;
     }
     return convertToUser(user);
   }
+
+  /**
+   * List users
+   * @param  {Array<String>} names  user names
+   * @return {Array<User>}
+  */
+  async list(names) {
+    const rows = await User.listByNames(names);
+    const users:Array<UserInfo> = [];
+    rows.forEach(function (row) {
+      users.push(convertToUser(row));
+    });
+    return users;
+  };
+
+  /**
+   * Search users
+   * @param  {String} query  query keyword
+   * @param  {Object} [options] optional query params
+   *  - {Number} limit match users count, default is `20`
+   * @return {Array<User>}
+  */
+  async search (query, options) {
+    options = options || {};
+    options.limit = parseInt(options.limit);
+    if (!options.limit || options.limit < 0) {
+      options.limit = 20;
+    }
+
+    const rows = await User.search(query, options);
+    const users:Array<UserInfo>= [];
+    rows.forEach(function (row) {
+      users.push(convertToUser(row));
+    });
+    return users;
+  };
 }

@@ -25,5 +25,9 @@ export = {
   privatePackages: [],
   // registry scopes, if don't set, means do not support scopes
   scopes: ['@cnpm', '@cnpmtest', '@cnpm-test'],
+  // when you not intend to ingegrate with your company's user system, then use null, it would
+  // use the default cnpm user system
+  userService: null,
+  customUserService:false
 
 } as AppConfig;

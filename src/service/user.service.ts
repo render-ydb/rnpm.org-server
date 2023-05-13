@@ -1,16 +1,34 @@
 import { Provide } from '@midwayjs/core';
-import { Config, ALL } from '@midwayjs/core';
+import appConfig = require('../appConfig');
+import DefaultUserService from '../utils/defaultUserService';
+import { Json } from '../interface';
+
+if (!appConfig.userService) {
+  appConfig.userService = new DefaultUserService();
+  appConfig.customUserService = false;
+} else {
+  appConfig.customUserService = true;
+}
+appConfig.scopes = appConfig.scopes || [];
+
+const convertUser = (user: Json) => {
+  if (!user) {
+    if (!user) {
+      return null;
+    }
+    user.scopes = user.scopes || [];
+    if (user.scopes.length === 0 && appConfig.scopes.length > 0) {
+      user.scopes = appConfig.scopes.slice();
+    }
+  }
+}
 
 
 @Provide()
 export class UserService {
 
-  @Config(ALL)
-  appConifg;
-
-
   async auth(userName: string, password: string) {
-    // TODO
+    
   }
   async get(userName: string) {
     // TODO
