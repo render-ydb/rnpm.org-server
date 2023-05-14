@@ -25,5 +25,6 @@ export = {
   privatePackages: [],
   // registry scopes, if don't set, means do not support scopes
   scopes: ['@cnpm', '@cnpmtest', '@cnpm-test'],
+  redisCache: false
 
 } as AppConfig;

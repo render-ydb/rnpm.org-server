@@ -1,6 +1,7 @@
 import { MidwayConfig } from "@midwayjs/core";
+import appConfig = require("../appConfig");
 
-export default {
+const midwayConfig: MidwayConfig = {
   // use for cookie sign key, should change to your own and keep security
   keys: '1683448357044_7620',
   koa: {
@@ -28,7 +29,7 @@ export default {
         database: "render",
         username: 'root',
         password: "123456",
-        port: '3306',
+        port: 3306,
         dialect: 'mysql',
         entities: [
           "entity"
@@ -44,5 +45,19 @@ export default {
       }
     }
   }
+}
 
-} as MidwayConfig;
+if (appConfig.redisCache) {
+  midwayConfig.redis = {
+    client: {
+      port: 6379, 
+      host: "127.0.0.1", 
+      password: "auth",
+      db: 0,
+    },
+  }
+
+}
+
+
+export default midwayConfig;

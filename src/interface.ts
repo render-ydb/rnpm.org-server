@@ -4,20 +4,22 @@ import { SwaggerOptions } from "@midwayjs/swagger";
  * @description configuration file types
 */
 
-interface IAdmins {
+interface Admins {
   fengmk2: string;
   admin: string;
   dead_horse: string
 }
+
 
 export interface AppConfig {
   swagger: SwaggerOptions;
   uploadDir: string
   registryHost: string,
   protocol: string,
-  admins: IAdmins,
+  admins: Admins,
   privatePackages: Array<string>,
   scopes: Array<string>,
+  redisCache:boolean
 }
 
 

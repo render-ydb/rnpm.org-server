@@ -9,6 +9,7 @@ import { NotFoundFilter } from './filter/notfound.filter';
 import { ValidateErrorFilter } from './filter/validate.filter';
 import { ReportMiddleware } from './middleware/report.middleware';
 import * as sequelize from '@midwayjs/sequelize';
+import * as redis from '@midwayjs/redis';
 
 @Configuration({
   imports: [
@@ -20,6 +21,7 @@ import * as sequelize from '@midwayjs/sequelize';
       component: info,
       enabledEnvironment: ['local'],
     },
+    redis
   ],
   importConfigs: [join(__dirname, './config')],
 })
@@ -31,6 +33,6 @@ export class ContainerLifeCycle {
     // add middleware
     this.app.useMiddleware([ReportMiddleware]);
     // add filter
-    this.app.useFilter([NotFoundFilter, DefaultErrorFilter,ValidateErrorFilter]);
+    this.app.useFilter([NotFoundFilter, DefaultErrorFilter, ValidateErrorFilter]);
   }
 }

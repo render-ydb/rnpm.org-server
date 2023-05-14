@@ -4,15 +4,12 @@ import { ApiTags } from '@midwayjs/swagger';
 
 @ApiTags(['web'])
 @Controller('/')
-export class HomeController {
+export class WebController {
 
   @Inject()
   ctx: Context;
 
-  @Get('/')
-  async home(): Promise<string> {
-    return 'Hello Midwayjs!';
-  }
+
 
   @Put('/:name')
   async publishPkg(@Param('name') name:string,@Body() body:any){

@@ -28,13 +28,12 @@ export class AddUserService {
   // type: 'user',
   // roles: [],
   // date: '2023-05-13T11:53:02.223Z'
-  async index(body: UserDTO = {} as UserDTO) {
+  async createNewUser(body: UserDTO = {} as UserDTO) {
     const { name, password } = body;
-
+  
     let loginedUser;
     try {
       loginedUser = await this.userService.authAndSave(name, password);
-      console.log("loginedUser", loginedUser)
     } catch (err) {
       this.ctx.status = err.status || 500;
       return {
