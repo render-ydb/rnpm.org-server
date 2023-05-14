@@ -6,20 +6,25 @@ import { Token } from '../models';
 import { TokenEntity } from "../entity/token.entity";
 import { UserService } from "./user.service";
 
+
 const DEFAULT_TOKEN_OPTIONS = {
     readonly: false,
     cidrWhitelist: [],
 };
+
+type TokenOptions = typeof DEFAULT_TOKEN_OPTIONS;
 
 const DEFAULT_LIST_TOKEN_OPTIONS = {
     perPage: 10,
     page: 0,
 };
 
+// 对token进行哈希计算，生成一个长度为512的哈希值，并将其转换为16进制字符串格式输出
 const createTokenKey = (token: string) => {
     return crypto.createHash('sha512').update(token).digest('hex');
 }
 
+// token脱敏处理，只保留前6位和后6位，中间用...替换
 const redacteToken = (token: string) => {
     if (!token) {
         return null;
@@ -71,8 +76,9 @@ export class TokenService {
         return await this.userService.get(name);
     }
 
-    async createToken(userId: string, options: Json) {
+    async createToken(userId: string, options: TokenOptions) {
         options = Object.assign({}, DEFAULT_TOKEN_OPTIONS, options);
+        // 生成长度为36的随机UUID
         const token = uuid.v4();
         const key = createTokenKey(token);
         const tokenObj = {

@@ -101,7 +101,7 @@ class UserModel {
         return user;
     }
 
-    // add cnpm user
+    // add new user
     async add(user: Json) {
         let roles: Array<string> | string = user.roles || [];
         try {

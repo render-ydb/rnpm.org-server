@@ -30,10 +30,11 @@ export class AddUserService {
   // date: '2023-05-13T11:53:02.223Z'
   async index(body: UserDTO = {} as UserDTO) {
     const { name, password } = body;
+
     let loginedUser;
     try {
       loginedUser = await this.userService.authAndSave(name, password);
-      console.log(loginedUser);
+      console.log("loginedUser", loginedUser)
     } catch (err) {
       this.ctx.status = err.status || 500;
       return {
@@ -42,12 +43,16 @@ export class AddUserService {
       }
     }
 
+    // 用户已经存在，返回新的token
     if (loginedUser) {
       const token = await this.tokenService.createToken(body.name, {
         readonly: false,
         cidrWhitelist: [],
       });
       this.ctx.status = 201;
+      // 返回token信息，保存在.npmrc文件中，后续上传包或者其他操作使用该token进行验证
+      // 例如.npmrc文件中有如下内容
+      //localhost:7001/:_authToken=458f07b8-8818-47c3-b994-d4bf203e16eb
       return {
         token: token.token,
         ok: true,
@@ -57,26 +62,17 @@ export class AddUserService {
     }
 
     const user = {
-      name: body.name,
+      name,
       salt: '',
       password_sha: '',
-      // @ts-ignore
       email: body.email,
       ip: this.ctx.ip || '0.0.0.0',
       roles: body.roles || [],
     };
     ensurePasswordSalt(user, body);
 
-    if (!user.salt || !user.password_sha || !user.email) {
-      this.ctx.status = 422;
-      const error = '[param_error] params missing, name, email or password missing';
-      return {
-        error,
-        reason: error,
-      };
-    }
-
     const existUser = await this.userService.get(name);
+    console.log("existUser", existUser)
     if (existUser) {
       this.ctx.status = 409;
       const error = '[conflict] User ' + name + ' already exists';
@@ -95,12 +91,6 @@ export class AddUserService {
       cidrWhitelist: [],
     });
     this.ctx.status = 200;
-    console.log("jieguo", {
-      token: token.token,
-      ok: true,
-      id: 'org.couchdb.user:' + name,
-      rev: result.rev
-    })
     return {
       token: token.token,
       ok: true,
