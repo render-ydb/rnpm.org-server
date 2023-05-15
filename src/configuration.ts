@@ -1,4 +1,4 @@
-import { Configuration, App } from '@midwayjs/core';
+import { Configuration, App, IMidwayContainer } from '@midwayjs/core';
 import * as koa from '@midwayjs/koa';
 import * as validate from '@midwayjs/validate';
 import * as swagger from '@midwayjs/swagger';
@@ -29,7 +29,10 @@ export class ContainerLifeCycle {
   @App()
   app: koa.Application;
 
-  async onReady() {
+  async onReady(container: IMidwayContainer) {
+    const dataSourceManager = await container.getAsync(sequelize.SequelizeDataSourceManager);
+    const globalSequlize = dataSourceManager.getDataSource('default');
+    this.app.setAttr('globalSequlize', globalSequlize);
     // add middleware
     this.app.useMiddleware([ReportMiddleware]);
     // add filter

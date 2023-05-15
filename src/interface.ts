@@ -1,25 +1,33 @@
-import { SwaggerOptions } from "@midwayjs/swagger";
-
 /**
  * @description configuration file types
 */
 
-interface Admins {
-  fengmk2: string;
-  admin: string;
-  dead_horse: string
+
+interface MailAuth {
+  user:string;
+  pass:string;
+}
+
+interface Mail {
+  enable:boolean;
+  appname:string;
+  from:string;
+  service:string;
+  auth:MailAuth
 }
 
 
 export interface AppConfig {
-  swagger: SwaggerOptions;
-  uploadDir: string
-  registryHost: string,
-  protocol: string,
-  admins: Admins,
-  privatePackages: Array<string>,
-  scopes: Array<string>,
-  redisCache:boolean
+  uploadDir: string;
+  registryHost: string;
+  protocol: string;
+  admins: Record<string,any>;
+  privatePackages: Array<string>;
+  scopes: Array<string>;
+  redisCache:boolean;
+  mail:Mail;
+  logdir:string;
+  debug:boolean;
 }
 
 

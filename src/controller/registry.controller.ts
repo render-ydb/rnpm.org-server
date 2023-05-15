@@ -15,19 +15,20 @@ export class RegistryController {
   @Inject()
   addUser: AddUserService
 
+
   @Inject()
-  totalService: TotalService
+  totalService: TotalService;
 
 
-  @Get('/',{
-    summary:'显示所有数据'
+  @Get('/', {
+    summary: '显示所有数据'
   })
-  async root(){
+  async root() {
     return await this.totalService.showTotal()
   }
 
-  @Put('/-/user/org.couchdb.user:name',{
-    summary:'npm客户端用户登录'
+  @Put('/-/user/org.couchdb.user:name', {
+    summary: 'npm客户端用户登录'
   })
   async createUser(@Body() body: UserDTO) {
     return await this.addUser.createNewUser(body)
