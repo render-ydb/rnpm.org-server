@@ -18,6 +18,9 @@ class Total {
         })
             .catch(callback);
     }
+    async find(args) {
+       return await TotalEntity.findOne(args)
+    }
 }
 
 export = new Total();

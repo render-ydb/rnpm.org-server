@@ -26,7 +26,7 @@ const midwayConfig: MidwayConfig = {
   sequelize: {
     dataSource: {
       default: {
-        database: "render",
+        database: appConfig.database,
         username: 'root',
         password: "123456",
         port: 3306,
@@ -41,7 +41,7 @@ const midwayConfig: MidwayConfig = {
           charset: 'utf8',
           collate: 'utf8_general_ci',
         },
-        sync: false,
+        sync: true,
       }
     }
   }

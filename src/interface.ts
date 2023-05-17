@@ -28,6 +28,7 @@ export interface AppConfig {
   mail:Mail;
   logdir:string;
   debug:boolean;
+  database:string;
 }
 
 

@@ -2,7 +2,7 @@ import { Column, DataType, Table, Model } from 'sequelize-typescript';
 
 @Table({
   tableName: 'total',
-  timestamps: true,
+  timestamps: false,
   paranoid: true,
   indexes: [
     {

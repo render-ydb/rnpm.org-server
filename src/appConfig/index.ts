@@ -42,5 +42,6 @@ export = {
   // if in debug mode, some middleware like limit wont load
   // logger module will print to stdout
   debug: process.env.NODE_ENV === 'development',
+  database:"render"
 
 } as AppConfig;
