@@ -15,6 +15,7 @@
     "@midwayjs/swagger": "3",
     "@midwayjs/validate": "^3.0.0",
     "error-formater": "^1.0.3",
+    "fs-cnpm": "^2.4.1",
     "gravatar": "^1.8.2",
     "humanize-ms": "^1.2.1",
     "mini-logger": "^1.1.3",

@@ -1,5 +1,6 @@
 import { AppConfig } from "../interface";
 import path = require("path");
+import Nfs = require("fs-cnpm");
 // =>src
 const root = path.dirname(__dirname);
 const dataDir = path.join(process.env.HOME || root, '.rnpm.org');
@@ -38,15 +39,20 @@ export = {
   },
   // log dir name
   logdir: path.join(path.dirname(root), 'rnpm-logs'),
-    // debug mode
+  // debug mode
   // if in debug mode, some middleware like limit wont load
   // logger module will print to stdout
   debug: process.env.NODE_ENV === 'development',
-  database:"render",
-   // sync mode select
+  database: "render",
+  // sync mode select
   // none: do not sync any module, proxy all public modules from sourceNpmRegistry
   // exist: only sync exist modules
   // all: sync all modules
   syncModel: 'none', // 'none', 'all', 'exist'
+
+  // package tarball store in local filesystem by default
+  nfs: new Nfs({
+    dir: path.join(dataDir, 'nfs')
+  }),
 
 } as AppConfig;

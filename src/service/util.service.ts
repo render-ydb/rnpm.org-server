@@ -1,14 +1,15 @@
 import { Inject, Provide } from "@midwayjs/core";
-// import path = require("path");
-// import fs = require("fs");
-// import utility = require("utility");
-// import appConfig = require("../appConfig");
-// import ms = require("humanize-ms");
-// import rimraf = require("rimraf");
+import path = require("path");
+import fs = require("fs");
+import utility = require("utility");
+import appConfig = require("../appConfig");
+import ms = require("humanize-ms");
 import moment = require("moment");
 import { DownloadTotalService } from "./download_total_service";
-
-
+import { Json } from "../interface";
+const rimraf = require("rimraf");
+const nfs = appConfig.nfs;
+const DOWNLOAD_TIMEOUT = ms('10m');
 
 @Provide()
 export class UtilService {
@@ -79,5 +80,100 @@ export class UtilService {
 
         }
         return download;
+    }
+
+    setLicense(pkg: Json) {
+        let license;
+        license = pkg.license || pkg.licenses || pkg.licence || pkg.licences;
+        if (!license) {
+            return;
+        }
+
+        if (Array.isArray(license)) {
+            license = license[0];
+        }
+
+        if (typeof license === 'object') {
+            pkg.license = {
+                name: license.name || license.type,
+                url: license.url
+            };
+        }
+
+        if (typeof license === 'string') {
+            if (license.match(/(http|https)(:\/\/)/ig)) {
+                pkg.license = {
+                    name: license,
+                    url: license
+                };
+            } else {
+                pkg.license = {
+                    url: this.getOssLicenseUrlFromName(license),
+                    name: license
+                };
+            }
+        }
+    };
+
+    getOssLicenseUrlFromName(name: string) {
+        const base = 'http://opensource.org/licenses/';
+
+        const licenseMap = {
+            'bsd': 'BSD-2-Clause',
+            'mit': 'MIT',
+            'x11': 'MIT',
+            'mit/x11': 'MIT',
+            'apache 2.0': 'Apache-2.0',
+            'apache2': 'Apache-2.0',
+            'apache 2': 'Apache-2.0',
+            'apache-2': 'Apache-2.0',
+            'apache': 'Apache-2.0',
+            'gpl': 'GPL-3.0',
+            'gplv3': 'GPL-3.0',
+            'gplv2': 'GPL-2.0',
+            'gpl3': 'GPL-3.0',
+            'gpl2': 'GPL-2.0',
+            'lgpl': 'LGPL-2.1',
+            'lgplv2.1': 'LGPL-2.1',
+            'lgplv2': 'LGPL-2.1'
+        };
+
+        return licenseMap[name.toLowerCase()] ?
+            base + licenseMap[name.toLowerCase()] : base + name;
+    };
+
+    ensureSinceIsDate(since: Date) {
+        if (!(since instanceof Date)) {
+            return new Date(Number(since));
+        }
+        return since;
+    }
+
+    async downloadAsReadStream(key: string) {
+        const options = { timeout: DOWNLOAD_TIMEOUT };
+        if (nfs.createDownloadStream) {
+            return await nfs.createDownloadStream(key, options);
+        }
+
+        const tmpPath = path.join(appConfig.uploadDir,
+            utility.randomString() + key.replace(/\//g, '-'));
+        let tarball;
+        function cleanup() {
+            rimraf(tmpPath, utility.noop);
+            if (tarball) {
+                tarball.destroy();
+            }
+        }
+
+        try {
+            await nfs.download(key, tmpPath, options);
+        } catch (err) {
+            cleanup();
+            throw err;
+        }
+        tarball = fs.createReadStream(tmpPath);
+        tarball.once('error', cleanup);
+        tarball.once('end', cleanup);
+        return tarball;
     }
 }

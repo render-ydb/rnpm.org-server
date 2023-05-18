@@ -30,6 +30,8 @@ export interface AppConfig {
   debug: boolean;
   database: string;
   syncModel: 'none' | 'all' | 'exist';
+  nfs: any
+
 }
 
 
