@@ -4,6 +4,7 @@ import { QueryTypes, Sequelize } from "sequelize";
 import { TotalEntity } from "../entity/total.entity";
 import appConfig = require("../appConfig");
 import { Inject, Provide } from "@midwayjs/core";
+import { Json } from "../interface";
 
 
 // 选取module表中name列中 不重复值的数量，并将其命名为count
@@ -50,7 +51,7 @@ export class ResigtryTotalService {
         console.log("uc", uc)
         console.log("info", info);
         console.log("sizes", sizes[0])
-        const total = {
+        const total:Json = {
             data_tables: {},
             disk_size: 0,
             data_size: 0,
@@ -84,7 +85,7 @@ export class ResigtryTotalService {
             total.index_size += row.index_length;
         }
         total.disk_size = total.data_size + total.index_size;
-        return JSON.stringify(total, null, 2)
+        return total;
     }
     async getTotalInfo() {
         const row: TotalEntity = await Total.find({

@@ -42,6 +42,11 @@ export = {
   // if in debug mode, some middleware like limit wont load
   // logger module will print to stdout
   debug: process.env.NODE_ENV === 'development',
-  database:"render"
+  database:"render",
+   // sync mode select
+  // none: do not sync any module, proxy all public modules from sourceNpmRegistry
+  // exist: only sync exist modules
+  // all: sync all modules
+  syncModel: 'none', // 'none', 'all', 'exist'
 
 } as AppConfig;

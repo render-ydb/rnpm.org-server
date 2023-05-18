@@ -4,16 +4,16 @@
 
 
 interface MailAuth {
-  user:string;
-  pass:string;
+  user: string;
+  pass: string;
 }
 
 interface Mail {
-  enable:boolean;
-  appname:string;
-  from:string;
-  service:string;
-  auth:MailAuth
+  enable: boolean;
+  appname: string;
+  from: string;
+  service: string;
+  auth: MailAuth
 }
 
 
@@ -21,14 +21,15 @@ export interface AppConfig {
   uploadDir: string;
   registryHost: string;
   protocol: string;
-  admins: Record<string,any>;
+  admins: Record<string, any>;
   privatePackages: Array<string>;
   scopes: Array<string>;
-  redisCache:boolean;
-  mail:Mail;
-  logdir:string;
-  debug:boolean;
-  database:string;
+  redisCache: boolean;
+  mail: Mail;
+  logdir: string;
+  debug: boolean;
+  database: string;
+  syncModel: 'none' | 'all' | 'exist';
 }
 
 
@@ -44,10 +45,10 @@ export interface UserBaseInfo {
   roles: Array<string>;
   date: string,
   salt: string,
-  password_sha:string,
-  readonly:any
-  cidr_whitelist:Array<string>
+  password_sha: string,
+  readonly: any
+  cidr_whitelist: Array<string>
 }
 
 
-export type Json = Record<string,any>
+export type Json = Record<string, any>
