@@ -1,4 +1,5 @@
 import { Column, DataType, Table, Model } from 'sequelize-typescript';
+import jsonParser = require('../utils/jsonParser');
 
 @Table({
   tableName: 'module_unpublished',
@@ -67,7 +68,9 @@ export class ModuleUnpublishedEntity extends Model {
   @Column({
     type: DataType.TEXT,
     allowNull: true,
-    comment: "base info: tags, time, maintainers, description, versions"
+    comment: "base info: tags, time, maintainers, description, versions",
+    get: jsonParser.JSONGetter('package'),
+    set: jsonParser.JSONSetter('package'),
   })
   package: string;
 }

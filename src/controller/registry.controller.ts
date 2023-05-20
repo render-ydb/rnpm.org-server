@@ -1,10 +1,12 @@
-import { Inject, Controller, Put, Body, Get } from '@midwayjs/core';
+import { Inject, Controller, Put, Body, Get, Query } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
 import { ApiTags } from '@midwayjs/swagger';
 import { AddUserService } from '../registry/user/add.service';
 import { TotalService } from '../service/total.service';
 import { UserDTO } from '../dto/user.dto';
 import { ListAllService } from '../registry/package/list_all.service';
+import { ChangeService } from '../registry/package/change.service';
+
 
 
 @ApiTags(['registry'])
@@ -21,7 +23,10 @@ export class RegistryController {
   totalService: TotalService;
 
   @Inject()
-  listAllService: ListAllService
+  listAllService: ListAllService;
+
+  @Inject()
+  changeService:ChangeService
 
 
   @Get('/', {
@@ -36,6 +41,11 @@ export class RegistryController {
   })
   async listAll() {
     return await this.listAllService.listAll()
+  }
+
+  @Get('/-/all/changes')
+  async changes(@Query() query) {
+    return await this.changeService.listSince(query);
   }
 
   @Put('/-/user/org.couchdb.user:name', {

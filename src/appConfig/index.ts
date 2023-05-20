@@ -55,4 +55,9 @@ export = {
     dir: path.join(dataDir, 'nfs')
   }),
 
+  // /-/all/changes
+  // since different changes are aggregated through many tables
+  // prevent changesStream changes collisions
+  changesDelay: 5000,
+
 } as AppConfig;

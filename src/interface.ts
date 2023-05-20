@@ -31,7 +31,7 @@ export interface AppConfig {
   database: string;
   syncModel: 'none' | 'all' | 'exist';
   nfs: any
-
+  changesDelay:number
 }
 
 
