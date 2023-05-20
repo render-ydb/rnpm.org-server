@@ -6,6 +6,7 @@ import { Context } from "koa";
 import { QueryTypes, Sequelize } from "sequelize";
 
 const parseYearMonth = (date: string) => {
+    // YYYY-MM-DD=> YYYYMM
     return Number(date.substring(0, 7).replace('-', ''));
 }
 

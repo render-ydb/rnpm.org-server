@@ -61,12 +61,12 @@ export class TotalService {
         total.instance_start_time = startTime;
         total.node_version = process.version;
         total.app_version = version;
-        total.donate = 'https://xxxxxx';
+        total.emial = '1609059419@qq.com';
         total.sync_model = appConfig.syncModel;
 
         cache = total;
         cache.cache_time = Date.now();
-        return JSON.stringify(total,null,2);
+        return total;
     }
     async get() {
         const globalSequlize: Sequelize = this.ctx.app.getAttr("globalSequlize");
@@ -75,14 +75,6 @@ export class TotalService {
         const vc = (await globalSequlize.query<Count>(TOTAL_VERSION_SQL, { type: QueryTypes.SELECT }))[0] as unknown as Count;
         const uc = (await globalSequlize.query<Count>(TOTAL_USER_SQL, { type: QueryTypes.SELECT }))[0] as unknown as Count;
         const info = await this.getTotalInfo() || {} as TotalEntity;
-        if (typeof info.moduleDelete === 'string') {
-            info.moduleDelete = Number(info.moduleDelete)
-        }
-        console.log("mc", mc);
-        console.log("vc", vc)
-        console.log("uc", uc)
-        console.log("info", info);
-        console.log("sizes", sizes[0])
         const total: Json = {
             data_tables: {},
             disk_size: 0,

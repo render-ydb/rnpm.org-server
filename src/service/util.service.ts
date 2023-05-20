@@ -37,12 +37,14 @@ export class UtilService {
         end = end.format('YYYY-MM-DD');
         lastweekStart = lastweekStart.format('YYYY-MM-DD');
         const method = name ? 'getModuleTotal' : 'getTotal';
+    
         const args = [start, end];
         if (name) {
             args.unshift(name)
         }
 
-        const rows = this.downloadTotalService[method].apply(this.downloadTotalService, args);
+        const rows = await this.downloadTotalService[method].apply(this.downloadTotalService, args);
+      
         const download = {
             today: 0,
             thisweek: 0,
