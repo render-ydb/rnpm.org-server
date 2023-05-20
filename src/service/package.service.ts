@@ -102,5 +102,23 @@ export class PackageService {
   return await func(since, limit)
  }
  
+ async listPublicModuleNamesSince(start) {
+  if (!(start instanceof Date)) {
+    start = new Date(Number(start));
+  }
+  const rows = await Tag.findAll({
+    attributes: ['name'],
+    where: {
+      gmt_modified: {
+        gt: start
+      }
+    },
+  });
+  const names = {};
+  for (let i = 0; i < rows.length; i++) {
+    names[rows[i].name] = 1;
+  }
+  return Object.keys(names);
+};
 
 }

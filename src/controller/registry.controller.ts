@@ -6,6 +6,7 @@ import { TotalService } from '../service/total.service';
 import { UserDTO } from '../dto/user.dto';
 import { ListAllService } from '../registry/package/list_all.service';
 import { ChangeService } from '../registry/package/change.service';
+import { ListSinceService } from '../service/list_since.service';
 
 
 
@@ -26,7 +27,10 @@ export class RegistryController {
   listAllService: ListAllService;
 
   @Inject()
-  changeService:ChangeService
+  changeService:ChangeService;
+
+  @Inject()
+  listSinceService:ListSinceService
 
 
   @Get('/', {
@@ -46,6 +50,11 @@ export class RegistryController {
   @Get('/-/all/changes')
   async changes(@Query() query) {
     return await this.changeService.listSince(query);
+  }
+
+  @Get('/-/all/since')
+  async listSince(@Query() query) {
+    return await this.listSinceService.listSince(query);
   }
 
   @Put('/-/user/org.couchdb.user:name', {
