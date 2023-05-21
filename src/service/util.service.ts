@@ -179,5 +179,3 @@ export class UtilService {
         return tarball;
     }
 }
-
-// 明天看看整体total的整体逻辑，数据表的结构、在进行totalservice的合并，哈哈

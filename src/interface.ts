@@ -1,7 +1,7 @@
 /**
  * @description configuration file types
 */
-
+import { Context } from '@midwayjs/koa';
 
 interface MailAuth {
   user: string;
@@ -31,7 +31,8 @@ export interface AppConfig {
   database: string;
   syncModel: 'none' | 'all' | 'exist';
   nfs: any
-  changesDelay:number
+  changesDelay:number;
+  alwaysAuth:boolean
 }
 
 
@@ -53,4 +54,17 @@ export interface UserBaseInfo {
 }
 
 
-export type Json = Record<string, any>
+export type Json = Record<string, any>;
+
+// 增强的上下文
+
+export interface AppUser {
+  error:Error;
+  name:string;
+  isAdmin:boolean;
+  scopes:Array<string>
+}
+export interface AppContext extends Context{
+  user:AppUser
+}
+

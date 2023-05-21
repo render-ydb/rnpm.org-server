@@ -1,4 +1,4 @@
-import { Provide } from '@midwayjs/core';
+import { Provide ,ScopeEnum,Scope} from '@midwayjs/core';
 import appConfig = require('../appConfig');
 import gravatar = require('gravatar');
 import { Json } from '../interface';
@@ -64,6 +64,7 @@ const convertUser = (user: Json) => {
 
 
 @Provide()
+@Scope(ScopeEnum.Request, { allowDowngrade: true })
 export class UserService {
 
   /**

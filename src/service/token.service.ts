@@ -1,10 +1,11 @@
-import { Inject, Provide } from "@midwayjs/core";
+import { Inject, Provide,Scope, ScopeEnum} from "@midwayjs/core";
 import { Json } from "../interface";
 import crypto = require("crypto");
 import uuid = require("uuid");
 import { Token } from '../models';
 import { TokenEntity } from "../entity/token.entity";
 import { UserService } from "./user.service";
+ScopeEnum
 
 
 const DEFAULT_TOKEN_OPTIONS = {
@@ -48,6 +49,7 @@ const convertToken = (row: TokenEntity, options: Json = {}) => {
 }
 
 @Provide()
+@Scope(ScopeEnum.Request, { allowDowngrade: true })
 export class TokenService {
 
     @Inject()
@@ -55,6 +57,7 @@ export class TokenService {
 
     async validateToken(token: string, options: Json) {
         const row = await Token.findByToken(token);
+      
         if (!row) {
             return null;
         }

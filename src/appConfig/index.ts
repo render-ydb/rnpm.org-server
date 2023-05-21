@@ -59,5 +59,8 @@ export = {
   // since different changes are aggregated through many tables
   // prevent changesStream changes collisions
   changesDelay: 5000,
+  // always-auth https://docs.npmjs.com/misc/config#always-auth
+  // Force npm to always require authentication when accessing the registry, even for GET requests.
+  alwaysAuth: false,
 
 } as AppConfig;

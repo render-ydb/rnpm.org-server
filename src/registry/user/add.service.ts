@@ -52,6 +52,12 @@ export class AddUserService {
       // 返回token信息，保存在.npmrc文件中，后续上传包或者其他操作使用该token进行验证
       // 例如.npmrc文件中有如下内容
       //localhost:7001/:_authToken=458f07b8-8818-47c3-b994-d4bf203e16eb
+      console.log({
+        token: token.token,
+        ok: true,
+        id: 'org.couchdb.user:' + loginedUser.login,
+        rev: Date.now() + '-' + loginedUser.login
+      })
       return {
         token: token.token,
         ok: true,

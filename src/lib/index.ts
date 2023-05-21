@@ -152,3 +152,14 @@ export const isSyncWorkerRequest = (ctx) => {
     }
     return isSyncWorkerRequest;
 }
+
+
+export const getAuthorizeType =  (ctx)=> {
+    const authorization = (ctx.get('authorization') || '').trim();
+    console.log("authorization",authorization)
+    if (BASIC_PREFIX.test(authorization)) {
+      return AuthorizeType.BASIC;
+    } else if (BEARER_PREFIX.test(authorization)) {
+      return AuthorizeType.BEARER;
+    }
+  };

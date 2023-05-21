@@ -48,7 +48,6 @@ export class DownloadTotalService {
         const startMonth = parseYearMonth(start);
         const endMonth = parseYearMonth(end);
         const rows = await DownloadTotal.findAll({
-            attributes:[],
             where: {
                 date: {
                     gte: startMonth,
