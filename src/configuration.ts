@@ -12,6 +12,7 @@ import * as sequelize from '@midwayjs/sequelize';
 import * as redis from '@midwayjs/redis';
 import { AuthMiddleware } from './middleware/auth.middleware';
 import { BlockMiddleware } from './middleware/block.middleware';
+import { MaxRequestsMiddleware } from './middleware/max_requests.middleware';
 
 @Configuration({
   imports: [
@@ -37,10 +38,12 @@ export class ContainerLifeCycle {
     this.app.setAttr('globalSequlize', globalSequlize);
     // add middleware
     this.app.useMiddleware([
+      MaxRequestsMiddleware,
       AuthMiddleware,
       BlockMiddleware,
       ReportMiddleware,
     ]);
+    
     // add filter
     this.app.useFilter([NotFoundFilter, DefaultErrorFilter, ValidateErrorFilter]);
   }
