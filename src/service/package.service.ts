@@ -1,6 +1,6 @@
 import { Inject, Provide } from "@midwayjs/core";
 import { Context } from '@midwayjs/koa';
-import { QueryTypes, Sequelize } from "sequelize";
+import { QueryTypes, Sequelize,Op } from "sequelize";
 import { TagEntity } from "../entity/tag.entity";
 import { isPrivatePackage } from "../utils";
 import appConfig = require("../appConfig");
@@ -10,6 +10,8 @@ import Module = require("../models/module");
 import { CHANGE_TYPE } from "../utils";
 import Tag = require("../models/tag");
 import ModuleUnpublished = require("../models/module_unpublished");
+
+
 
 @Provide()
 export class PackageService {
@@ -30,10 +32,10 @@ export class PackageService {
     });
   };
 
-   listModelSince (Model, attributes, mapper) {
+  listModelSince(Model, attributes, mapper) {
     return async (since, limit) => {
       const start = this.utilService.ensureSinceIsDate(since);
-      const findCondition:Json = {
+      const findCondition: Json = {
         attributes: attributes,
         where: {
           gmt_modified: {
@@ -55,24 +57,24 @@ export class PackageService {
     }
   }
 
-  async listVersionSince(since, limit){
-   const func =  this.listModelSince(
-    Module,
-    ['id', 'name', 'version', 'gmtModified'],
-    function (row) {
-      return {
-        type: CHANGE_TYPE.PACKAGE_VERSION_ADDED,
-        id: row.name,
-        changes: [{ version: row.version }],
-        gmt_modified: row.gmtModified,
-      };
-    }
-   );
-   return await func(since, limit)
+  async listVersionSince(since, limit) {
+    const func = this.listModelSince(
+      Module,
+      ['id', 'name', 'version', 'gmtModified'],
+      function (row) {
+        return {
+          type: CHANGE_TYPE.PACKAGE_VERSION_ADDED,
+          id: row.name,
+          changes: [{ version: row.version }],
+          gmt_modified: row.gmtModified,
+        };
+      }
+    );
+    return await func(since, limit)
   }
 
   async listTagSince(since, limit) {
-    const func =  this.listModelSince(
+    const func = this.listModelSince(
       Tag,
       ['id', 'name', 'tag', 'gmtModified'],
       function (row) {
@@ -83,42 +85,98 @@ export class PackageService {
           gmt_modified: row.gmtModified,
         };
       }
-     );
-     return await func(since, limit)
+    );
+    return await func(since, limit)
   }
 
- async listUnpublishedModuleSince(since,limit) {
- const func =  this.listModelSince(
-    ModuleUnpublished,
-    ['id', 'name', 'gmtModified'],
-    function (row) {
-      return {
-        type: CHANGE_TYPE.PACKAGE_UNPUBLISHED,
-        id: row.name,
-        gmt_modified: row.gmtModified,
-      };
-    }
-  );
-  return await func(since, limit)
- }
- 
- async listPublicModuleNamesSince(start) {
-  if (!(start instanceof Date)) {
-    start = new Date(Number(start));
-  }
-  const rows = await Tag.findAll({
-    attributes: ['name'],
-    where: {
-      gmt_modified: {
-        gt: start
+  async listUnpublishedModuleSince(since, limit) {
+    const func = this.listModelSince(
+      ModuleUnpublished,
+      ['id', 'name', 'gmtModified'],
+      function (row) {
+        return {
+          type: CHANGE_TYPE.PACKAGE_UNPUBLISHED,
+          id: row.name,
+          gmt_modified: row.gmtModified,
+        };
       }
-    },
-  });
-  const names = {};
-  for (let i = 0; i < rows.length; i++) {
-    names[rows[i].name] = 1;
+    );
+    return await func(since, limit)
   }
-  return Object.keys(names);
-};
 
+  async listPublicModuleNamesSince(start) {
+    if (!(start instanceof Date)) {
+      start = new Date(Number(start));
+    }
+    const rows = await Tag.findAll({
+      attributes: ['name'],
+      where: {
+        gmt_modified: {
+          gt: start
+        }
+      },
+    });
+    const names = {};
+    for (let i = 0; i < rows.length; i++) {
+      names[rows[i].name] = 1;
+    }
+    return Object.keys(names);
+  };
+
+  // module:list
+  async listPrivateModulesByScope(scope: string) {
+    var tags = await Tag.findAll({
+      where: {
+        tag: 'latest',
+        name: {
+          [Op.like]: scope + '/%'
+        }
+      }
+    });
+
+    if (tags.length === 0) {
+      return [];
+    }
+
+    const ids = tags.map(function (tag) {
+      return tag.moduleId;
+    });
+
+    return await Module.findAll({
+      where: {
+        id: ids
+      }
+    });
+  };
+
+  async listModules(names: Array<string>) {
+    if (names.length === 0) {
+      return [];
+    }
+
+    // fetch latest module tags
+    const tags = await Tag.findAll({
+      where: {
+        name: names,
+        tag: 'latest'
+      }
+    });
+    if (tags.length === 0) {
+      return [];
+    }
+
+    const ids = tags.map(function (tag) {
+      return tag.moduleId;
+    });
+
+    var rows = await Module.findAll({
+      where: {
+        id: ids
+      },
+      attributes: [
+        'name', 'description', 'version',
+      ]
+    });
+    return rows;
+  };
 }

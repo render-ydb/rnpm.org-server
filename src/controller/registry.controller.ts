@@ -7,6 +7,8 @@ import { UserDTO } from '../dto/user.dto';
 import { ListAllService } from '../registry/package/list_all.service';
 import { ChangeService } from '../registry/package/change.service';
 import { ListSinceService } from '../service/list_since.service';
+import { ListShortsService } from '../registry/package/list_shorts';
+
 
 
 
@@ -27,10 +29,13 @@ export class RegistryController {
   listAllService: ListAllService;
 
   @Inject()
-  changeService:ChangeService;
+  changeService: ChangeService;
 
   @Inject()
-  listSinceService:ListSinceService
+  listSinceService: ListSinceService;
+
+  @Inject()
+  listShortsService: ListShortsService
 
 
   @Get('/', {
@@ -56,6 +61,12 @@ export class RegistryController {
   async listSince(@Query() query) {
     return await this.listSinceService.listSince(query);
   }
+
+  @Get('/-/short')
+  async listShorts(@Query() query) {
+    return await this.listShortsService.listShorts(query);
+  }
+
 
   @Put('/-/user/org.couchdb.user:name', {
     summary: 'npm客户端用户登录'
