@@ -41,12 +41,9 @@ export class AuthMiddleware implements IMiddleware<AppContext, NextFunction> {
       } catch (err) {
         // do not response error here
         // many request do not need login
-        console.log(err)
         ctx.user.error = err;
       }
-      console.log("row", row)
       if (!row) {
-
         return await this.unauthorized(ctx, next);
       }
       ctx.user.name = row.login;

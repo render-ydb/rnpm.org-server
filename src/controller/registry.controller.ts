@@ -9,6 +9,8 @@ import { ChangeService } from '../registry/package/change.service';
 import { ListSinceService } from '../service/list_since.service';
 import { ListShortsService } from '../registry/package/list_shorts';
 import { ListVersionsService } from '../registry/package/list_versions';
+import { LoginMiddleware } from '../middleware/login.middleware';
+import { WhoamiService } from '../registry/user/whoami.service';
 
 
 
@@ -39,7 +41,10 @@ export class RegistryController {
   listShortsService: ListShortsService;
 
   @Inject()
-  listVersionsService:ListVersionsService
+  listVersionsService:ListVersionsService;
+
+  @Inject()
+  whoamiService:WhoamiService
 
 
   @Get('/', {
@@ -74,6 +79,13 @@ export class RegistryController {
   @Get('/-/allversions')
   async allversions(@Query() query) {
     return await this.listVersionsService.allversions(query);
+  }
+
+  @Get('/-/whoami',{
+    middleware:[LoginMiddleware]
+  })
+  async index() {
+    return await this.whoamiService.userInfo()
   }
 
   
