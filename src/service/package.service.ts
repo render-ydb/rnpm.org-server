@@ -10,6 +10,7 @@ import Module = require("../models/module");
 import { CHANGE_TYPE } from "../utils";
 import Tag = require("../models/tag");
 import ModuleUnpublished = require("../models/module_unpublished");
+import ModuleAbbreviated = require("../models/module_abbreviated");
 
 
 
@@ -177,6 +178,18 @@ export class PackageService {
         'name', 'description', 'version',
       ]
     });
+    return rows;
+  };
+
+  async findAllModuleAbbreviateds (where, order?, limit?, offset?) {
+    const params = {
+      where,
+      order,
+      limit,
+      offset,
+      attributes: ['name', 'version', 'publish_time', 'gmt_modified'],
+    };
+    const rows = await ModuleAbbreviated.findAll(params);
     return rows;
   };
 }

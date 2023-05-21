@@ -8,6 +8,7 @@ import { ListAllService } from '../registry/package/list_all.service';
 import { ChangeService } from '../registry/package/change.service';
 import { ListSinceService } from '../service/list_since.service';
 import { ListShortsService } from '../registry/package/list_shorts';
+import { ListVersionsService } from '../registry/package/list_versions';
 
 
 
@@ -35,7 +36,10 @@ export class RegistryController {
   listSinceService: ListSinceService;
 
   @Inject()
-  listShortsService: ListShortsService
+  listShortsService: ListShortsService;
+
+  @Inject()
+  listVersionsService:ListVersionsService
 
 
   @Get('/', {
@@ -66,6 +70,13 @@ export class RegistryController {
   async listShorts(@Query() query) {
     return await this.listShortsService.listShorts(query);
   }
+
+  @Get('/-/allversions')
+  async allversions(@Query() query) {
+    return await this.listVersionsService.allversions(query);
+  }
+
+  
 
 
   @Put('/-/user/org.couchdb.user:name', {
