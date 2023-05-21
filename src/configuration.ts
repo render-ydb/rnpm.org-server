@@ -11,6 +11,7 @@ import { ReportMiddleware } from './middleware/report.middleware';
 import * as sequelize from '@midwayjs/sequelize';
 import * as redis from '@midwayjs/redis';
 import { AuthMiddleware } from './middleware/auth.middleware';
+import { BlockMiddleware } from './middleware/block.middleware';
 
 @Configuration({
   imports: [
@@ -35,7 +36,11 @@ export class ContainerLifeCycle {
     const globalSequlize = dataSourceManager.getDataSource('default');
     this.app.setAttr('globalSequlize', globalSequlize);
     // add middleware
-    this.app.useMiddleware([AuthMiddleware,ReportMiddleware]);
+    this.app.useMiddleware([
+      AuthMiddleware,
+      BlockMiddleware,
+      ReportMiddleware,
+    ]);
     // add filter
     this.app.useFilter([NotFoundFilter, DefaultErrorFilter, ValidateErrorFilter]);
   }
