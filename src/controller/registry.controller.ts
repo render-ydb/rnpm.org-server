@@ -84,8 +84,16 @@ export class RegistryController {
   @Get('/-/whoami',{
     middleware:[LoginMiddleware]
   })
-  async index() {
+  async whoami() {
     return await this.whoamiService.userInfo()
+  }
+
+  @Get('/-/ping',{
+    middleware:[LoginMiddleware]
+  })
+  async ping() {
+    this.ctx.status = 200;
+    return {};
   }
 
   
