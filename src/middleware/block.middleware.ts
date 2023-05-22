@@ -7,7 +7,6 @@ export class BlockMiddleware implements IMiddleware<Context, NextFunction> {
     resolve() {
         return async (ctx: Context, next: NextFunction) => {
             const ua = String(ctx.get('user-agent')).toLowerCase();
-            console.log("ua", ua);
             if (ua && ua.includes('ruby')) {
                 ctx.status = 403;
                 return {

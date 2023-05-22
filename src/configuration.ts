@@ -14,6 +14,7 @@ import { AuthMiddleware } from './middleware/auth.middleware';
 import { BlockMiddleware } from './middleware/block.middleware';
 import { MaxRequestsMiddleware } from './middleware/max_requests.middleware';
 
+
 @Configuration({
   imports: [
     koa,
@@ -38,6 +39,8 @@ export class ContainerLifeCycle {
     this.app.setAttr('globalSequlize', globalSequlize);
     // add middleware
     this.app.useMiddleware([
+      require("koa-conditional-get")(),
+      require("koa-etag")(),
       MaxRequestsMiddleware,
       AuthMiddleware,
       BlockMiddleware,
