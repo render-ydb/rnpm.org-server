@@ -32,7 +32,8 @@ export interface AppConfig {
   syncModel: 'none' | 'all' | 'exist';
   nfs: any
   changesDelay:number;
-  alwaysAuth:boolean
+  alwaysAuth:boolean;
+  enablePrivate:boolean;
 }
 
 

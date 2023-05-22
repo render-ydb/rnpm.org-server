@@ -39,11 +39,11 @@ export class ContainerLifeCycle {
     this.app.setAttr('globalSequlize', globalSequlize);
     // add middleware
     this.app.useMiddleware([
+      MaxRequestsMiddleware,
+      BlockMiddleware,
       require("koa-conditional-get")(),
       require("koa-etag")(),
-      MaxRequestsMiddleware,
       AuthMiddleware,
-      BlockMiddleware,
       ReportMiddleware,
     ]);
     

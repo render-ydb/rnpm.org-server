@@ -11,8 +11,12 @@ import { CHANGE_TYPE } from "../utils";
 import Tag = require("../models/tag");
 import ModuleUnpublished = require("../models/module_unpublished");
 import ModuleAbbreviated = require("../models/module_abbreviated");
+import PrivateModuleMaintainer = require("../models/module_maintainer");
+import NpmModuleMaintainer = require("../models/npm_module_maintaine");
 
-
+const  getMaintainerModel = async (name:string)=> {
+  return isPrivatePackage(name) ? PrivateModuleMaintainer : NpmModuleMaintainer;
+}
 
 @Provide()
 export class PackageService {
@@ -191,5 +195,42 @@ export class PackageService {
     };
     const rows = await ModuleAbbreviated.findAll(params);
     return rows;
+  };
+
+   async authMaintainer  (packageName:string, username:string) {
+    const mod = await getMaintainerModel(packageName);
+    // todo
+    var rs = yield [
+      mod.listMaintainers(packageName),
+      exports.getLatestModule(packageName)
+    ];
+    var maintainers = rs[0];
+    var latestMod = rs[1];
+    if (maintainers.length === 0) {
+      // if not found maintainers, try to get from latest module package info
+      var ms = latestMod && latestMod.package && latestMod.package.maintainers;
+      if (ms && ms.length > 0) {
+        maintainers = ms.map(function (user) {
+          return user.name;
+        });
+      }
+    }
+  
+    var isMaintainer = false;
+    if (latestMod && !latestMod.package._publish_on_cnpm) {
+      // no one can update public package maintainers
+      // public package only sync from source npm registry
+      isMaintainer = false;
+    } else if (maintainers.length === 0) {
+      // no maintainers, meaning this module is free for everyone
+      isMaintainer = true;
+    } else if (maintainers.indexOf(username) >= 0) {
+      isMaintainer = true;
+    }
+  
+    return {
+      isMaintainer: isMaintainer,
+      maintainers: maintainers
+    };
   };
 }

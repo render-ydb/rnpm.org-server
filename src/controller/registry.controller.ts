@@ -1,4 +1,4 @@
-import { Inject, Controller, Put, Body, Get, Query } from '@midwayjs/core';
+import { Inject, Controller, Put, Body, Get, Query, Param } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
 import { ApiTags } from '@midwayjs/swagger';
 import { AddUserService } from '../registry/user/add.service';
@@ -11,6 +11,8 @@ import { ListShortsService } from '../registry/package/list_shorts';
 import { ListVersionsService } from '../registry/package/list_versions';
 import { LoginMiddleware } from '../middleware/login.middleware';
 import { WhoamiService } from '../registry/user/whoami.service';
+import { PublishableMiddleware } from '../middleware/publishable.middleware';
+
 
 
 
@@ -41,10 +43,10 @@ export class RegistryController {
   listShortsService: ListShortsService;
 
   @Inject()
-  listVersionsService:ListVersionsService;
+  listVersionsService: ListVersionsService;
 
   @Inject()
-  whoamiService:WhoamiService
+  whoamiService: WhoamiService
 
 
   @Get('/', {
@@ -81,22 +83,38 @@ export class RegistryController {
     return await this.listVersionsService.allversions(query);
   }
 
-  @Get('/-/whoami',{
-    middleware:[LoginMiddleware]
+  @Get('/-/whoami', {
+    middleware: [LoginMiddleware]
   })
   async whoami() {
     return await this.whoamiService.userInfo()
   }
 
-  @Get('/-/ping',{
-    middleware:[LoginMiddleware]
+  @Get('/-/ping', {
+    middleware: [LoginMiddleware]
   })
   async ping() {
     this.ctx.status = 200;
     return {};
   }
 
-  
+  // 上传包
+  @Put('/:name', {
+    middleware: [
+      LoginMiddleware,
+      PublishableMiddleware
+    ]
+  })
+  async publishPkg(@Param('name') name: string, @Body() body: any) {
+    this.ctx.status = 200;
+    console.log("bodybodybodybody");
+    this.ctx.body = {
+      ok: true,
+      rev: '测试'
+    };
+  }
+
+
 
 
   @Put('/-/user/org.couchdb.user:name', {

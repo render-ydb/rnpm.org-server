@@ -16,7 +16,7 @@ export = {
   // default system admins
   admins: {
     // name: email
-    render: '1609059419@qq.com',
+    cubber: '1609059419@qq.com',
     // admin: 'admin@cnpmjs.org',
     // dead_horse: 'dead_horse@qq.com',
   },
@@ -62,5 +62,10 @@ export = {
   // always-auth https://docs.npmjs.com/misc/config#always-auth
   // Force npm to always require authentication when accessing the registry, even for GET requests.
   alwaysAuth: false,
+
+  // enable private mode or not
+  // private mode: only admins can publish, other users just can sync package from source npm
+  // public mode: all users can publish
+  enablePrivate: false,
 
 } as AppConfig;

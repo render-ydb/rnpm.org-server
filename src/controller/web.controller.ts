@@ -1,4 +1,4 @@
-import { Controller, Get, Put,Inject, Param, Body } from '@midwayjs/core';
+import { Controller, Get, Inject } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
 import { ApiTags } from '@midwayjs/swagger';
 
@@ -11,15 +11,15 @@ export class WebController {
 
 
 
-  @Put('/:name')
-  async publishPkg(@Param('name') name:string,@Body() body:any){
-    this.ctx.status = 200;
-    console.log(body);
-    this.ctx.body = {
-      ok: true,
-      rev: '测试'
-    };
-  }
+  // @Put('/:name')
+  // async publishPkg(@Param('name') name:string,@Body() body:any){
+  //   this.ctx.status = 200;
+  //   console.log("bodybodybodybody");
+  //   this.ctx.body = {
+  //     ok: true,
+  //     rev: '测试'
+  //   };
+  // }
 
   @Get(/^\/(@[\w\-\.]+\/[\w\-\.]+)\/([\w\-\.]+)$/)
   async test(): Promise<string> {
