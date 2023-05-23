@@ -1,6 +1,6 @@
 import { Inject, Provide } from "@midwayjs/core";
 import { Context } from '@midwayjs/koa';
-import { QueryTypes, Sequelize,Op } from "sequelize";
+import { QueryTypes, Sequelize, Op } from "sequelize";
 import { TagEntity } from "../entity/tag.entity";
 import { isPrivatePackage } from "../utils";
 import appConfig = require("../appConfig");
@@ -13,11 +13,32 @@ import ModuleUnpublished = require("../models/module_unpublished");
 import ModuleAbbreviated = require("../models/module_abbreviated");
 import PrivateModuleMaintainer = require("../models/module_maintainer");
 import NpmModuleMaintainer = require("../models/npm_module_maintaine");
+import { ModuleEntity } from "../entity/module.entity";
 
-const  getMaintainerModel = async (name:string)=> {
+const getMaintainerModel = async (name: string) => {
   return isPrivatePackage(name) ? PrivateModuleMaintainer : NpmModuleMaintainer;
 }
+const _parseRow = (row: ModuleEntity) => {
+  if (row.package.indexOf('%7B%22') === 0) {
+    // now store package will encodeURIComponent() after JSON.stringify
+    row.package = decodeURIComponent(row.package);
+  }
+  row.package = JSON.parse(row.package);
+  if (typeof row.publishTime === 'string') {
+    // pg bigint is string
+    row.publishTime = Number(row.publishTime);
+  }
+};
 
+const parseRow = (row: ModuleEntity) => {
+  if (row && row.package) {
+    try {
+      _parseRow(row);
+    } catch (e) {
+      console.warn('parse package error: %s, id: %s version: %s, error: %s', row.name, row.id, row.version, e);
+    }
+  }
+}
 @Provide()
 export class PackageService {
   @Inject()
@@ -185,7 +206,7 @@ export class PackageService {
     return rows;
   };
 
-  async findAllModuleAbbreviateds (where, order?, limit?, offset?) {
+  async findAllModuleAbbreviateds(where, order?, limit?, offset?) {
     const params = {
       where,
       order,
@@ -197,26 +218,24 @@ export class PackageService {
     return rows;
   };
 
-   async authMaintainer  (packageName:string, username:string) {
+  async authMaintainer(packageName: string, username: string) {
     const mod = await getMaintainerModel(packageName);
-    // todo
-    var rs = yield [
-      mod.listMaintainers(packageName),
-      exports.getLatestModule(packageName)
-    ];
-    var maintainers = rs[0];
-    var latestMod = rs[1];
+
+    let maintainers = await mod.listMaintainers(packageName);
+    const latestMod =  await this.getLatestModule(packageName);
     if (maintainers.length === 0) {
       // if not found maintainers, try to get from latest module package info
-      var ms = latestMod && latestMod.package && latestMod.package.maintainers;
+      // @ts-ignore
+      const ms = latestMod && latestMod.package && latestMod.package.maintainers;
       if (ms && ms.length > 0) {
         maintainers = ms.map(function (user) {
           return user.name;
         });
       }
     }
-  
-    var isMaintainer = false;
+
+    let isMaintainer = false;
+    // @ts-ignore
     if (latestMod && !latestMod.package._publish_on_cnpm) {
       // no one can update public package maintainers
       // public package only sync from source npm registry
@@ -227,10 +246,27 @@ export class PackageService {
     } else if (maintainers.indexOf(username) >= 0) {
       isMaintainer = true;
     }
-  
+
     return {
       isMaintainer: isMaintainer,
       maintainers: maintainers
     };
   };
+
+  async getLatestModule(name: string) {
+    return await this.getModuleByTag(name, 'latest');
+  };
+  async getModuleByTag(name, tag) {
+    const row = await Tag.findByNameAndTag(name, tag);
+    if (!row) {
+      return null;
+    }
+    return await this.getModule(row.name, row.version);
+  };
+
+  async getModule(name: string, version: string) {
+    const row = await Module.findByNameAndVersion(name, version);
+    parseRow(row);
+    return row;
+  }
 }

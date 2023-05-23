@@ -16,7 +16,7 @@ export = {
   // default system admins
   admins: {
     // name: email
-    cubber: '1609059419@qq.com',
+    render: '1609059419@qq.com',
     // admin: 'admin@cnpmjs.org',
     // dead_horse: 'dead_horse@qq.com',
   },
