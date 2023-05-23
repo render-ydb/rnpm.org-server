@@ -1,6 +1,9 @@
 import { ModuleEntity } from "../entity/module.entity";
 
 class Module {
+
+    model = ModuleEntity;
+
     async findByNameAndVersion(name: string, version) {
       
         return await ModuleEntity.findOne({
@@ -10,6 +13,14 @@ class Module {
     async findAll(args) {
         return await ModuleEntity.findAll(args);
     }   
+
+    async findById(id) {
+        return await ModuleEntity.findOne({
+            where:{
+                id
+            }
+        });
+    } 
 
 }
 

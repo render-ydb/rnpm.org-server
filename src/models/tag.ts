@@ -1,6 +1,7 @@
 import { TagEntity } from "../entity/tag.entity";
 
 class Tag {
+    model = TagEntity;
     async findByNameAndTag(name, tag) {
         return await TagEntity.findOne({ where: { name: name, tag: tag } });
     }

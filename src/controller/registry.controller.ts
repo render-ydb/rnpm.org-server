@@ -12,6 +12,7 @@ import { ListVersionsService } from '../registry/package/list_versions';
 import { LoginMiddleware } from '../middleware/login.middleware';
 import { WhoamiService } from '../registry/user/whoami.service';
 import { PublishableMiddleware } from '../middleware/publishable.middleware';
+import { SaveSerivce } from '../registry/package/save.service';
 
 
 
@@ -46,7 +47,10 @@ export class RegistryController {
   listVersionsService: ListVersionsService;
 
   @Inject()
-  whoamiService: WhoamiService
+  whoamiService: WhoamiService;
+
+  @Inject()
+  saveService:SaveSerivce;
 
 
   @Get('/', {
@@ -105,13 +109,8 @@ export class RegistryController {
       PublishableMiddleware
     ]
   })
-  async publishPkg(@Param('name') name: string, @Body() body: any) {
-    this.ctx.status = 200;
-    console.log("bodybodybodybody");
-    this.ctx.body = {
-      ok: true,
-      rev: '测试'
-    };
+  async savePackage(@Param('name') name: string, @Body() body: any) {
+    await this.saveService.savePackage(name,body)
   }
 
 

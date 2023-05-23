@@ -34,6 +34,8 @@ const midwayConfig: MidwayConfig = {
         entities: [
           "entity"
         ],
+      
+        timezone:'+08:00',
         define: {
           timestamps: true,
           createdAt: 'gmtCreate',

@@ -34,6 +34,7 @@ export interface AppConfig {
   changesDelay:number;
   alwaysAuth:boolean;
   enablePrivate:boolean;
+  maxDependencies:number;
 }
 
 
@@ -63,7 +64,8 @@ export interface AppUser {
   error:Error;
   name:string;
   isAdmin:boolean;
-  scopes:Array<string>
+  scopes:Array<string>;
+  email?:string
 }
 export interface AppContext extends Context{
   user:AppUser

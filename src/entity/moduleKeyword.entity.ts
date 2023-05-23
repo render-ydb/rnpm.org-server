@@ -4,6 +4,7 @@ import { Column, DataType, Table, Model } from 'sequelize-typescript';
   tableName: 'module_keyword',
   timestamps: true,
   paranoid: true,
+  charset:"utf8",
   indexes: [
     {
       name: "PRIMARY",
@@ -48,6 +49,14 @@ export class ModuleKeywordEntity extends Model {
     field: 'gmt_create'
   })
   gmtCreate: string;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+    comment: "modified time",
+    field: 'gmt_modified'
+  })
+  gmtModified: string;
 
   @Column({
     type: DataType.STRING(100),

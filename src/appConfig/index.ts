@@ -68,4 +68,7 @@ export = {
   // public mode: all users can publish
   enablePrivate: false,
 
+   // max handle number of package.json `dependencies` property
+   maxDependencies: 200,
+
 } as AppConfig;

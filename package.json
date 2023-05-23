@@ -29,6 +29,7 @@
     "sequelize": "^6.31.1",
     "sequelize-auto-midway": "^0.0.10",
     "sequelize-typescript": "^2.1.5",
+    "ssri": "^10.0.4",
     "utility": "^1.18.0",
     "uuid": "^9.0.0"
   },

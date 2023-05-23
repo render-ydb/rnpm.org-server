@@ -49,6 +49,7 @@ export class AuthMiddleware implements IMiddleware<AppContext, NextFunction> {
       ctx.user.name = row.login;
       ctx.user.isAdmin = row.site_admin;
       ctx.user.scopes = row.scopes;
+      ctx.user.email = row.email;
       await next();
     };
   }
