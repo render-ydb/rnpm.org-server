@@ -71,4 +71,7 @@ export = {
    // max handle number of package.json `dependencies` property
    maxDependencies: 200,
 
+     // if install return 404, try to sync from source registry
+  syncByInstall: true,
+
 } as AppConfig;

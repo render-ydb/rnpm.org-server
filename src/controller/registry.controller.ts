@@ -13,6 +13,7 @@ import { LoginMiddleware } from '../middleware/login.middleware';
 import { WhoamiService } from '../registry/user/whoami.service';
 import { PublishableMiddleware } from '../middleware/publishable.middleware';
 import { SaveSerivce } from '../registry/package/save.service';
+import { SyncByInstallMiddleware } from '../middleware/sync_by_install.middleware';
 
 
 
@@ -50,7 +51,7 @@ export class RegistryController {
   whoamiService: WhoamiService;
 
   @Inject()
-  saveService:SaveSerivce;
+  saveService: SaveSerivce;
 
 
   @Get('/', {
@@ -110,8 +111,19 @@ export class RegistryController {
     ]
   })
   async savePackage(@Param('name') name: string, @Body() body: any) {
-    await this.saveService.savePackage(name,body)
+    await this.saveService.savePackage(name, body)
   }
+
+  // 获取包的信息
+  @Get('/:name', {
+    middleware: [
+      SyncByInstallMiddleware
+    ]
+  })
+  async getPackage() {
+    return { a: 111 }
+  }
+
 
 
 

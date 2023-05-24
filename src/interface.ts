@@ -31,10 +31,11 @@ export interface AppConfig {
   database: string;
   syncModel: 'none' | 'all' | 'exist';
   nfs: any
-  changesDelay:number;
-  alwaysAuth:boolean;
-  enablePrivate:boolean;
-  maxDependencies:number;
+  changesDelay: number;
+  alwaysAuth: boolean;
+  enablePrivate: boolean;
+  maxDependencies: number;
+  syncByInstall:boolean
 }
 
 
@@ -61,13 +62,14 @@ export type Json = Record<string, any>;
 // 增强的上下文
 
 export interface AppUser {
-  error:Error;
-  name:string;
-  isAdmin:boolean;
-  scopes:Array<string>;
-  email?:string
+  error: Error;
+  name: string;
+  isAdmin: boolean;
+  scopes: Array<string>;
+  email?: string
 }
-export interface AppContext extends Context{
-  user:AppUser
+export interface AppContext extends Context {
+  user: AppUser;
+  allowSync: boolean;
 }
 
