@@ -1,10 +1,11 @@
 import { UserEntity } from "../entity/user.entity";
 import utility = require("utility");
 import { Json } from "../interface";
+import { Op } from "sequelize";
 
 
 class UserModel {
-
+    model=UserEntity;
     // 根据password和salt，得到特定哈希值
     createPasswordSha(password: string, salt: string) {
         return utility.sha1(password + salt);
@@ -35,7 +36,7 @@ class UserModel {
         return await UserEntity.findAll({
             where: {
                 name: {
-                    in: names
+                    [Op.in]: names
                 }
             }
         });

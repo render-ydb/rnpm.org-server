@@ -16,10 +16,19 @@ import NpmModuleMaintainer = require("../models/npm_module_maintaine");
 import { ModuleEntity } from "../entity/module.entity";
 import ModuleDependency = require("../models/module_deps");
 import ModuleKeyword = require("../models/module_keyword");
+import ModuleStar = require("../models/module.star");
+import User = require("../models/user");
+import semver = require("semver");
+import { setDownloadURL } from "../lib";
+import PackageReadme = require("../models/package_readme");
+
 
 const getMaintainerModel = async (name: string) => {
   return isPrivatePackage(name) ? PrivateModuleMaintainer : NpmModuleMaintainer;
 }
+
+
+
 const _parseRow = (row: ModuleEntity) => {
   if (row.package.indexOf('%7B%22') === 0) {
     // now store package will encodeURIComponent() after JSON.stringify
@@ -431,4 +440,349 @@ export class PackageService {
     return await PrivateModuleMaintainer.addMaintainers(name, usernames);
   }
 
+  async getModuleLastModified(name: string) {
+    const gmt_modified: string = await Module.model.max('gmtModified', {
+      where: {
+        name: name,
+      },
+    });
+    return gmt_modified;
+  }
+
+  async listModuleTags(name) {
+    return await Tag.findAll({ where: { name: name } });
+  }
+
+  async listModuleAbbreviatedsByName(name: string) {
+    if (!appConfig.enableAbbreviatedMetadata) {
+      return [];
+    }
+
+    var rows = await ModuleAbbreviated.findAll({
+      where: {
+        name: name,
+      },
+      order: [['id', 'DESC']],
+    });
+
+    for (var row of rows) {
+      row.package = JSON.parse(row.package);
+      if (row.publishTime && typeof row.publishTime === 'string') {
+        // pg bigint is string
+        row.publishTime = Number(row.publishTime);
+      }
+    }
+    return rows;
+  }
+  async listModulesByName(moduleName: string, attributes?: Array<string>) {
+    var mods = await Module.model.findAll({
+      where: {
+        name: moduleName
+      },
+      order: [['id', 'DESC']],
+      attributes
+    });
+
+    for (var mod of mods) {
+      parseRow(mod);
+    }
+    return mods;
+  }
+  async listStarUserNames(moduleName: string) {
+    var rows = await ModuleStar.model.findAll({
+      where: {
+        name: moduleName
+      }
+    });
+    return rows.map(function (row) {
+      return row.user;
+    });
+  }
+  async listMaintainers(name: string) {
+    var mod = await getMaintainerModel(name);
+    var usernames = await mod.listMaintainers(name);
+    if (usernames.length === 0) {
+      return usernames;
+    }
+    var users = await User.listByNames(usernames);
+    return users.map(function (user) {
+      return {
+        name: user.name,
+        email: user.email
+      };
+    });
+  }
+  async getUnpublishedModule(name: string) {
+    return await ModuleUnpublished.findByName(name);
+  }
+
+  async saveUnpublishedModule(name: string, pkg) {
+    return await ModuleUnpublished.save(name, pkg);
+  };
+
+  async removeModulesByName(name: string) {
+    await Module.model.destroy({
+      where: {
+        name: name,
+      },
+    });
+    if (appConfig.enableAbbreviatedMetadata) {
+      await ModuleAbbreviated.model.destroy({
+        where: {
+          name: name,
+        },
+      });
+    }
+  }
+  async removeModuleTags(name: string) {
+    return await Tag.model.destroy({ where: { name: name } });
+  }
+
+  async listPublicModuleMaintainers(name: string) {
+    return await NpmModuleMaintainer.listMaintainers(name);
+  }
+
+  // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#abbreviated-version-object
+  async saveModuleAbbreviated(mod, remoteAbbreviatedVersion) {
+    // try to use remoteAbbreviatedVersion first
+    var pkg;
+    if (remoteAbbreviatedVersion) {
+      pkg = Object.assign({}, remoteAbbreviatedVersion, {
+        // override remote tarball
+        dist: Object.assign({}, remoteAbbreviatedVersion.dist, mod.package.dist, {
+          noattachment: undefined,
+        }),
+      });
+    } else {
+      pkg = Object.assign({}, mod.package, {
+        // ignore readme force
+        readme: undefined,
+      });
+    }
+    var publish_time = mod.publish_time || Date.now();
+    var item = await ModuleAbbreviated.findByNameAndVersion(mod.name, mod.version);
+    if (!item) {
+      item = ModuleAbbreviated.model.build({
+        name: mod.name,
+        version: mod.version,
+      });
+    }
+    item.publishTime = publish_time;
+    item.package = JSON.stringify(pkg);
+
+    if (item.changed()) {
+      item = await item.save();
+    }
+    var result = {
+      id: item.id,
+      gmt_modified: item.gmtModified,
+    };
+
+    return result;
+  };
+
+  async getModuleById(id: number) {
+    var row = await Module.findById(Number(id));
+    parseRow(row);
+    return row;
+  }
+
+  async getModuleByRange(name: string, range) {
+    var rows = await this.listModulesByName(name, ['id', 'version']);
+    var versionMap = {};
+    var versions = rows.map(function (row) {
+      versionMap[row.version] = row;
+      return row.version;
+    }).filter(function (version) {
+      return semver.valid(version);
+    });
+
+    var version = semver.maxSatisfying(versions, range);
+    if (!versionMap[version]) {
+      return null;
+    }
+
+    var id = versionMap[version].id;
+    return await this.getModuleById(id);
+  }
+  async showPackage(name: string, tag: string, ctx) {
+    if (tag === '*') {
+      tag = 'latest';
+    }
+    if (tag === '*') {
+      tag = 'latest';
+    }
+    var version = semver.valid(tag);
+    var range = semver.validRange(tag);
+    var mod;
+    if (version) {
+      mod = await this.getModule(name, version);
+    } else if (range) {
+      mod = await this.getModuleByRange(name, range);
+    } else {
+      mod = await this.getModuleByTag(name, tag);
+    }
+
+    if (mod) {
+      setDownloadURL(mod.package, ctx || {});
+      mod.package._cnpm_publish_time = mod.publish_time;
+      mod.package.publish_time = mod.package.publish_time || mod.publish_time;
+      var rs = [
+        await this.listMaintainers(name),
+        await this.listModuleTags(name),
+      ];
+      var maintainers = rs[0];
+      if (maintainers.length > 0) {
+        mod.package.maintainers = maintainers;
+      }
+      var tags = rs[1];
+      var distTags = {};
+      for (var i = 0; i < tags.length; i++) {
+        var t = tags[i];
+        // @ts-ignore
+        distTags[t.tag] = t.version;
+      }
+      // show tags for npminstall faster download
+      mod.package['dist-tags'] = distTags;
+      return mod;
+    }
+  }
+
+  async removeModulesByNameAndVersions(name: string, versions) {
+    await Module.model.destroy({
+      where: {
+        name: name,
+        version: versions,
+      }
+    });
+    if (appConfig.enableAbbreviatedMetadata) {
+      await ModuleAbbreviated.model.destroy({
+        where: {
+          name: name,
+          version: versions,
+        },
+      });
+    }
+  }
+
+  async updateModuleDescription(id, description) {
+    var mod = await this.getModuleById(id);
+    if (!mod) {
+      return null;
+    }
+    mod.description = description;
+    // also need to update package.description
+    var pkg = mod.package || {};
+    // @ts-ignore
+    pkg.description = description;
+    mod.package = stringifyPackage(pkg);
+
+    return await mod.save({
+      fields: ['description', 'package']
+    });
+  }
+
+  async removeModuleTagsByNames(moduleName: string, tagNames) {
+    return await Tag.model.destroy({
+      where: {
+        name: moduleName,
+        tag: tagNames
+      }
+    });
+  }
+  async updateModuleReadme(id, readme) {
+    var mod = await this.getModuleById(id);
+    if (!mod) {
+      return null;
+    }
+    var pkg = mod.package || {};
+    // @ts-ignore
+    pkg.readme = readme;
+    return await this.updateModulePackage(id, pkg);
+  }
+
+  async updateModuleAbbreviatedPackage(item) {
+    // item => { id, name, version, _hasShrinkwrap, os, cpu, peerDependenciesMeta, workspaces }
+    var mod = await ModuleAbbreviated.findByNameAndVersion(item.name, item.version);
+    if (!mod) {
+      return null;
+    }
+    var pkg = JSON.parse(mod.package);
+    for (var key in item) {
+      if (key === 'name' || key === 'version' || key === 'id') {
+        continue;
+      }
+      pkg[key] = item[key];
+    }
+    mod.package = JSON.stringify(pkg);
+
+    return await mod.save({
+      fields: ['package']
+    });
+  }
+
+  async updateModulePackageFields(id, fields) {
+    var mod = await this.getModuleById(id);
+    if (!mod) {
+      return null;
+    }
+    var pkg = mod.package || {};
+    for (var k in fields) {
+      pkg[k] = fields[k];
+    }
+    return await this.updateModulePackage(id, pkg);
+  }
+
+  async addStar(name: string, user: string) {
+    var row = await ModuleStar.model.findOne({
+      where: {
+        name: name,
+        user: user
+      }
+    });
+    if (row) {
+      return row;
+    }
+
+    row = ModuleStar.model.build({
+      name: name,
+      user: user
+    });
+    return await row.save();
+  }
+  async addPublicModuleMaintainer(name: string, user: string) {
+    return await NpmModuleMaintainer.addMaintainer(name, user);
+  }
+
+  async removePublicModuleMaintainer(name: string, user: string) {
+    return await NpmModuleMaintainer.removeMaintainers(name, user);
+  }
+
+  // try to return latest version readme
+  async getPackageReadme(name: string, onlyPackageReadme?) {
+    if (appConfig.enableAbbreviatedMetadata) {
+      var row = await PackageReadme.findByName(name);
+      if (row) {
+        return {
+          version: row.version,
+          readme: row.readme,
+        };
+      }
+      if (onlyPackageReadme) {
+        return;
+      }
+    }
+  }
+
+  async savePackageReadme (name:string, readme, latestVersion) {
+    var item = await PackageReadme.model.findOne({ where: { name: name } });
+    if (!item) {
+      item = PackageReadme.model.build({
+        name: name,
+      });
+    }
+    item.readme = readme;
+    item.version = latestVersion;
+    return await item.save();
+  }
 }

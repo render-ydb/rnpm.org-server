@@ -5,7 +5,7 @@ import uuid = require("uuid");
 import { Token } from '../models';
 import { TokenEntity } from "../entity/token.entity";
 import { UserService } from "./user.service";
-ScopeEnum
+
 
 
 const DEFAULT_TOKEN_OPTIONS = {

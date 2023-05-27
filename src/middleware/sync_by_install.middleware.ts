@@ -7,7 +7,6 @@ import appConfig = require('../appConfig');
 export class SyncByInstallMiddleware implements IMiddleware<AppContext, NextFunction> {
   resolve() {
     return async (ctx: AppContext, next: NextFunction) => {
-     
       ctx.allowSync = false;
       if (!appConfig.syncByInstall) {
         return await next();
@@ -23,7 +22,9 @@ export class SyncByInstallMiddleware implements IMiddleware<AppContext, NextFunc
       if (ctx.query.write) {
         return await next();
       }
-      const name = ctx.params.name;
+     
+      const name = ctx.params[0];
+    
       // private scoped package don't sync
       if (name && name[0] === '@') {
         const scope = name.split('/')[0];

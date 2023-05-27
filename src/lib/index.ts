@@ -79,7 +79,7 @@ export const isBackupPkgFile = (fileName: string) => {
 export const setDownloadURL = (
     pkg: Record<string, any>,
     ctx: Record<string, any>,
-    host: string
+    host?: string
 ) => {
     if (pkg.dist) {
         host = host || appConfig.registryHost || ctx.host;

@@ -35,7 +35,31 @@ export interface AppConfig {
   alwaysAuth: boolean;
   enablePrivate: boolean;
   maxDependencies: number;
-  syncByInstall:boolean
+  syncByInstall: boolean;
+  enableAbbreviatedMetadata: boolean;
+  enableBugVersion: boolean;
+  registryCacheControlHeader: string;
+  registryVaryHeader: string;
+  officialNpmRegistry: string;
+  officialNpmReplicate: string;
+  cnpmRegistry: string;
+  syncDevDependencies: boolean;
+  sourceNpmRegistry: string;
+  sourceNpmWeb: string;
+  enableWebDataRemoteRegistry: boolean;
+  webDataRemoteRegistry: string;
+  httpProxy: string;
+  accelerateHostMap:Json;
+  version:string;
+  sourceNpmRegistryIsCNpm:boolean;
+  syncDeletedVersions:boolean;
+  syncBackupFiles:boolean;
+  syncConcurrency:number;
+  syncInterval:string;
+  syncChangesStream:boolean;
+  syncDownloadOptions:Json
+  backupProtocol:string;
+  formatCustomFullPackageInfoAndVersions:Function
 }
 
 

@@ -50,6 +50,14 @@ export class ModuleStarEntity extends Model {
   gmtCreate: string;
 
   @Column({
+    type: DataType.DATE,
+    allowNull: false,
+    comment: "modified time",
+    field: 'gmt_modified'
+  })
+  gmtModified: string;
+
+  @Column({
     type: DataType.STRING(100),
     allowNull: false,
     comment: "user name"

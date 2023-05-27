@@ -14,6 +14,8 @@ import { WhoamiService } from '../registry/user/whoami.service';
 import { PublishableMiddleware } from '../middleware/publishable.middleware';
 import { SaveSerivce } from '../registry/package/save.service';
 import { SyncByInstallMiddleware } from '../middleware/sync_by_install.middleware';
+import { ListService } from '../registry/package/list.service';
+
 
 
 
@@ -52,6 +54,9 @@ export class RegistryController {
 
   @Inject()
   saveService: SaveSerivce;
+
+  @Inject()
+  listService:ListService
 
 
   @Get('/', {
@@ -115,13 +120,16 @@ export class RegistryController {
   }
 
   // 获取包的信息
-  @Get('/:name', {
+   // module
+  // scope package: params: [$name]
+  @Get(/^\/(@[\w\-\.]+\/[^\/]+)$/, {
     middleware: [
       SyncByInstallMiddleware
     ]
   })
   async getPackage() {
-    return { a: 111 }
+   
+     return await this.listService.listAllVersions()
   }
 
 
