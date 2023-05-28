@@ -1,7 +1,7 @@
 import { AppConfig } from "../interface";
 import path = require("path");
 import Nfs = require("fs-cnpm");
-const version  = require("../../package.json").version;
+const version = require("../../package.json").version;
 // =>src
 const root = path.dirname(__dirname);
 const dataDir = path.join(process.env.HOME || root, '.rnpm.org');
@@ -50,8 +50,8 @@ export = {
   // exist: only sync exist modules
   // all: sync all modules
   syncModel: 'none', // 'none', 'all', 'exist'
-    // sync package.json/dist-tag.json to sync dir
-    syncBackupFiles: false,
+  // sync package.json/dist-tag.json to sync dir
+  syncBackupFiles: false,
 
   // package tarball store in local filesystem by default
   nfs: new Nfs({
@@ -104,8 +104,8 @@ export = {
 
   // sync devDependencies or not, default is false
   syncDevDependencies: false,
-    // try to remove all deleted versions from original registry
-    syncDeletedVersions: true,
+  // try to remove all deleted versions from original registry
+  syncDeletedVersions: true,
 
   // sync source, upstream registry
   // If you want to directly sync from official npm's registry
@@ -126,7 +126,7 @@ export = {
 
   version,
 
-    // upstream registry is base on cnpm/cnpmjs.org or not
+  // upstream registry is base on cnpm/cnpmjs.org or not
   // if your upstream is official npm registry, please turn it off
   sourceNpmRegistryIsCNpm: true,
 
@@ -138,19 +138,25 @@ export = {
   syncChangesStream: false,
   syncDownloadOptions: {
     // formatRedirectUrl: function (url, location)
-    
+
   },
 
-   // When sync package, cnpm not know the access protocol.
+  // When sync package, cnpm not know the access protocol.
   // So should set manually
   backupProtocol: 'http',
 
-   // custom format full package list
+  // custom format full package list
   // change `GET /:name` request response body
   // use on `controllers/registry/list.js`
-  formatCustomFullPackageInfoAndVersions: ( packageInfo) => {
+  formatCustomFullPackageInfoAndVersions: (packageInfo) => {
     return packageInfo;
   },
-  
+
+  // custom format one package version
+  // change `GET /:name/:version` request response body
+  // use on `controllers/registry/show.js`
+  formatCustomOnePackageVersion: (packageVersion) => {
+    return packageVersion;
+  },
 
 } as AppConfig;

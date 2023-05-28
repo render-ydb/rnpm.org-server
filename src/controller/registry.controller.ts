@@ -15,6 +15,7 @@ import { PublishableMiddleware } from '../middleware/publishable.middleware';
 import { SaveSerivce } from '../registry/package/save.service';
 import { SyncByInstallMiddleware } from '../middleware/sync_by_install.middleware';
 import { ListService } from '../registry/package/list.service';
+import { ShowService } from '../registry/package/show.service';
 
 
 
@@ -56,7 +57,10 @@ export class RegistryController {
   saveService: SaveSerivce;
 
   @Inject()
-  listService:ListService
+  listService: ListService;
+
+  @Inject()
+  showService:ShowService
 
 
   @Get('/', {
@@ -120,16 +124,37 @@ export class RegistryController {
   }
 
   // 获取包的信息
-   // module
+  // scope package: params: [$name]
+  @Get('/:name', {
+    middleware: [
+      SyncByInstallMiddleware
+    ]
+  })
+  async getPackage() {
+    return await this.listService.listAllVersions()
+  }
+
+
+  // 获取包的信息
   // scope package: params: [$name]
   @Get(/^\/(@[\w\-\.]+\/[^\/]+)$/, {
     middleware: [
       SyncByInstallMiddleware
     ]
   })
-  async getPackage() {
-   
-     return await this.listService.listAllVersions()
+  async getScopePackage() {
+    return await this.listService.listAllVersions()
+  }
+
+  // 获取某个版本的包信息
+  // scope package: params: [$name, $version]
+  @Get(/^\/(@[\w\-\.]+\/[\w\-\.]+)\/([^\/]+)$/, {
+    middleware: [
+      SyncByInstallMiddleware
+    ]
+  })
+  async getScopePackageByVersion() {
+    return this.showService.show();
   }
 
 

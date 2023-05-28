@@ -36,7 +36,7 @@ export class ListService {
     bugVersionService: BugVersionService;
 
     async listAllVersions() {
-        const name = this.ctx.params[0];
+        const name = this.ctx.params[0] || this.ctx.params.name;
         const isSyncWorkerRequest = common.isSyncWorkerRequest(this.ctx);
         const isJSONPRequest = this.ctx.query.callback;
 

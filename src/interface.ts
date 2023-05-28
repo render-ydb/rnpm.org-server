@@ -59,7 +59,8 @@ export interface AppConfig {
   syncChangesStream:boolean;
   syncDownloadOptions:Json
   backupProtocol:string;
-  formatCustomFullPackageInfoAndVersions:Function
+  formatCustomFullPackageInfoAndVersions:Function;
+  formatCustomOnePackageVersion:Function
 }
 
 
